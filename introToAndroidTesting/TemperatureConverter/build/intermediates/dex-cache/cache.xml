@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="/Users/christinejulien/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-integration/1.3/5de0c73fef18917cd85d0ab70bb23818685e4dfd/hamcrest-integration-1.3.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="5de0c73fef18917cd85d0ab70bb23818685e4dfd">
+        <dex dex="/Users/christinejulien/StudioProjects/TemperatureConverter/app/build/intermediates/pre-dexed/androidTest/debug/hamcrest-integration-1.3_df88cfed28083c729585fc94e44b275b856fef91.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/christinejulien/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/2.0.1/516c03b21d50a644d538de0f0369c620989cd8f0/jsr305-2.0.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="516c03b21d50a644d538de0f0369c620989cd8f0">
+        <dex dex="/Users/christinejulien/StudioProjects/TemperatureConverter/app/build/intermediates/pre-dexed/androidTest/debug/jsr305-2.0.1_2ea06859428106a69a2c2e31972aa9a63ec00b6a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/christinejulien/.gradle/caches/modules-2/files-2.1/javax.annotation/javax.annotation-api/1.2/479c1e06db31c432330183f5cae684163f186146/javax.annotation-api-1.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="479c1e06db31c432330183f5cae684163f186146">
+        <dex dex="/Users/christinejulien/StudioProjects/TemperatureConverter/app/build/intermediates/pre-dexed/androidTest/debug/javax.annotation-api-1.2_3fd9278fea9c5e320101df267e598aa7cfd39e60.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/christinejulien/.android/build-cache/bf0406812907d27ff705c603272d20943653181f/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="f607369e68cb756b3f8f523403e3d80433a68aa1">
+        <dex dex="/Users/christinejulien/StudioProjects/TemperatureConverter/app/build/intermediates/pre-dexed/androidTest/debug/classes_858f08ea11240c1996064211c3194ad7ec87e71d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/christinejulien/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/2973d150c0dc1fefe998f834810d68f278ea58ec/junit-4.12.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="2973d150c0dc1fefe998f834810d68f278ea58ec">
+        <dex dex="/Users/christinejulien/StudioProjects/TemperatureConverter/app/build/intermediates/pre-dexed/androidTest/debug/junit-4.12_044ba162a304a1a3de568cff55395702cd6f91c1.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/christinejulien/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-library/1.3/4785a3c21320980282f9f33d0d1264a69040538f/hamcrest-library-1.3.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="4785a3c21320980282f9f33d0d1264a69040538f">
+        <dex dex="/Users/christinejulien/StudioProjects/TemperatureConverter/app/build/intermediates/pre-dexed/androidTest/debug/hamcrest-library-1.3_a31b35a13f2033e2e35673ea759ac21e206c822c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/christinejulien/.android/build-cache/7fbf4c278561857516e165dc5c02092d11834c39/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="83e81537012f1975aa902eedbdb8da5aa515aea5">
+        <dex dex="/Users/christinejulien/StudioProjects/TemperatureConverter/app/build/intermediates/pre-dexed/androidTest/debug/classes_261bacc7a5d99a4766ae58420061dcfb23027270.jar" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/christinejulien/StudioProjects/TemperatureConverter/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="d73d52b1421e8f67dfa67fb0da6ab60dfca705f0">
+        <dex dex="/Users/christinejulien/StudioProjects/TemperatureConverter/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_26c5eeaea637352dc1e1e231e030cf266ce09ea4/classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/christinejulien/.android/build-cache/0b13cf86e02171ae2fcae90966e5f8348ff83a64/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="e4805433aedef15e73a7eedf7e3496eb4363a583">
+        <dex dex="/Users/christinejulien/StudioProjects/TemperatureConverter/app/build/intermediates/pre-dexed/androidTest/debug/classes_d7444ad0a31b930440a6514663e97efdce4fc3de.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/christinejulien/.gradle/caches/modules-2/files-2.1/javax.inject/javax.inject/1/6975da39a7040257bd51d21a231b76c915872d38/javax.inject-1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="6975da39a7040257bd51d21a231b76c915872d38">
+        <dex dex="/Users/christinejulien/StudioProjects/TemperatureConverter/app/build/intermediates/pre-dexed/androidTest/debug/javax.inject-1_39a8a5ef3a43ba4a1dcd831ac46f9e940ad91228.jar" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/christinejulien/StudioProjects/TemperatureConverter/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="caff8e51a24901cfc9cd7e1cf83d84f4cb0c103b">
+        <dex dex="/Users/christinejulien/StudioProjects/TemperatureConverter/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_1d0ea9fe6f3138fd8aa74c372df2e1bd3737cb18/classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/christinejulien/.gradle/caches/modules-2/files-2.1/com.squareup/javawriter/2.1.1/67ff45d9ae02e583d0f9b3432a5ebbe05c30c966/javawriter-2.1.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="67ff45d9ae02e583d0f9b3432a5ebbe05c30c966">
+        <dex dex="/Users/christinejulien/StudioProjects/TemperatureConverter/app/build/intermediates/pre-dexed/androidTest/debug/javawriter-2.1.1_70594a7f61aa20501a16d8875c502adcc02af08a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/christinejulien/.android/build-cache/ee068ddc50665e0beb2fd8eb66c9f7030dd6e620/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="25a72389e79fbac13f78412a4a6ffacc1cdb0673">
+        <dex dex="/Users/christinejulien/StudioProjects/TemperatureConverter/app/build/intermediates/pre-dexed/androidTest/debug/classes_3ae742b7832e4b0555ea70657fd46c442200e04d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/christinejulien/.android/build-cache/009c88520231e9a6e135c3e6031b29a2154327c0/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="e1d90a3498ab7a4b68ea6e936e71cf7f4e95453f">
+        <dex dex="/Users/christinejulien/StudioProjects/TemperatureConverter/app/build/intermediates/pre-dexed/androidTest/debug/classes_4d3f1704428f3dc2dfb6389feec8e779d6f8f42b.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/christinejulien/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="42a25dc3219429f0e5d060061f71acb49bf010a0">
+        <dex dex="/Users/christinejulien/StudioProjects/TemperatureConverter/app/build/intermediates/pre-dexed/androidTest/debug/hamcrest-core-1.3_c7bdd1cd7497866bdb00936f0ea4dd3e912e67ee.jar" />
+    </item>
+
+</items>
