@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/Users/christinejulien/StudioProjects/QuickStartApp/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="caff8e51a24901cfc9cd7e1cf83d84f4cb0c103b">
+        <dex dex="/Users/christinejulien/StudioProjects/QuickStartApp/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_246489e3528b2387f111e20200d08b3de691b363/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/christinejulien/StudioProjects/QuickStartApp/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="d19441ef47a0533429cdff8f0f6d59d9419fc949">
+        <dex dex="/Users/christinejulien/StudioProjects/QuickStartApp/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_b75703d7c9077ed8805c0c6ffe18cdccf68c1d10/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/christinejulien/StudioProjects/QuickStartApp/app/libs/huelocalsdk.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="07362e192094e402e032db4407c86e36080340ab">
+        <dex dex="/Users/christinejulien/StudioProjects/QuickStartApp/app/build/intermediates/transforms/dex/debug/folders/1000/2/huelocalsdk_cebbbbcf5b69eb0f02cb943d23d86bd14de3821f/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/christinejulien/StudioProjects/QuickStartApp/app/libs/huesdkresources.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="7183fbb86900448556ef87d3af0db01a77c27a09">
+        <dex dex="/Users/christinejulien/StudioProjects/QuickStartApp/app/build/intermediates/transforms/dex/debug/folders/1000/2/huesdkresources_c189c5f6434f9f276b09d117fb420183502f4b06/classes.dex" />
+    </item>
+
+</items>

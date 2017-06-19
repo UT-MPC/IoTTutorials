@@ -1,0 +1,7 @@
+#Mon Jun 05 16:45:15 CDT 2017
+base.0=/Users/christinejulien/StudioProjects/QuickStartApp/app/build/intermediates/transforms/dex/debug/folders/1000/2/huesdkresources_c189c5f6434f9f276b09d117fb420183502f4b06
+renamed.1=classes.dex
+renamed.0=classes2.dex
+file.1=/Users/christinejulien/StudioProjects/QuickStartApp/app/build/intermediates/transforms/dex/debug/folders/1000/2/huelocalsdk_cebbbbcf5b69eb0f02cb943d23d86bd14de3821f/classes.dex
+base.1=/Users/christinejulien/StudioProjects/QuickStartApp/app/build/intermediates/transforms/dex/debug/folders/1000/2/huelocalsdk_cebbbbcf5b69eb0f02cb943d23d86bd14de3821f
+file.0=/Users/christinejulien/StudioProjects/QuickStartApp/app/build/intermediates/transforms/dex/debug/folders/1000/2/huesdkresources_c189c5f6434f9f276b09d117fb420183502f4b06/classes.dex
