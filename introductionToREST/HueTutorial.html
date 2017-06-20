@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title></title>
+</head>
+<h1>RESTful Programming with Philips Hue and the Hue Java SDK</h1>
+<h4>Christine Julien, The University of Texas at Austin</h4>
+<p>&nbsp;</p>
+
+<p>For this exercise, you will definitely need to work with one partner. So find a partner and let's get started!</p>
+<p>In this tutorial, the goal is eventually to learn how to use a RESTful programming interface to control some smart lights. There's some setup to get through first, though... Here's what you'll need to have on hand for this tutorial:</p>
+<ul>
+<li>A wireless access point (this will be shared among several pairs)</li>
+<li>A shared power strip (one per access point should be sufficient)</li>
+<li>An android device (one of the Moto Es or your own device)</li>
+<li>A Hue bridge</li>
+<li>One or more Hue Go lights</li>
+</ul>
+<h3>Getting Started with Hue</h3>
+<p>The first thing we're going to to is just make sure our smart lights work.</p>
+<p>First, plug<span>&nbsp;in the Hue&nbsp;bridge to a power outlet and it will automatically power up. Connect the bridge&nbsp;to a&nbsp;Wi-Fi router (into one of the slots numbered 1 through 4) using the network cable provided. Wait for the three lights to come on&nbsp;on the bridge.</span></p>
+<p><span>Next, on the android device you'll be using, you need to visit the Play Store and download the Hue app (unless it's already installed). [Hint: if you see two apps available, you want the one where the word Hue is in color (not just white).] Once the app is installed, open it. It will immediately search for Hue bridges. It will discover the one you have plugged in (and likely the ones that others around the room have plugged in also). [Hint: If you don't see your bridge in the app, try unplugging it from the router and plugging it into a different port on the router. Don't know why, but sometimes this step is glitchy.]</span></p>
+<p><span><strong>When you do the next step, you need to make sure no one else in the room is doing it at the same time.</strong> Push the button on the Hue bridge that you want to connect to. If you are asked to update the bridge, agree.</span></p>
+<p><span>Once you're connected to your bridge, you can start adding lights to it. Follow the instructions on the screen of your device, clicking "+" to add a new light. Because we have a lot of lights in the room for different groups, I recommend using the option to enter the light's serial number. You'll find the serial number on the underside (the curved part) of the Go light. Enter that where it says "Add serial number" in the Hue app. (Make sure the light is powered "on"!) Once you've added the light, you can click the little "i" in a circle to give it a new name. &nbsp;Go ahead and do that (use your own name(s), for example). Now you can add a second light. Follow the on screen instructions. Create a "room" that contains your team's two lights.</span></p>
+<p>Then play with the app a little bit to explore the kinds of things you can do with your light. [Note: this is kind of a terrible app, but you can get the idea by playing around.]</p>
+<h3>A Basic "Programming" of the Light: Issuing Some RESTful Commands</h3>
+<p>Let's put the Android app aside for the moment and look at how we issue some RESTful commands to the light. This will get us started on being able to write our own programs to control the lights.We're going to loosely follow the instructions that are <a href="https://www.developers.meethue.com/documentation/getting-started">here</a>.</p>
+<p>Your program won't talk&nbsp;<em>directly</em> to the light. Instead, you'll send commands to the hue bridge (via the WiFi router), and the bridge will pass those commands along to your lights. In order to send our commands to the bridge, we need to know the IP address of the bridge. The easiest way for us to get it right now is through the Android app that we know works. On the home screen of the Android app, click Settings (that's the gear in the upper right corner). Click on "Hue Bridges" then click the information logo on the right side next to your bridge. Click on "Network Settings". Toggle the DHCP switch. When you do this, you will turn DHCP off, but the app will show you the IP address of the bridge. Copy that down some place. Then turn DHCP back on. For our purposes, we'll use this hard-coded IP address when we write programs for our hue lights. This is a pretty brittle way to do things; in a real app, you will want to do this automatically. There are other ways to do this that are much better; see <a href="https://www.developers.meethue.com/documentation/hue-bridge-discovery">here</a>&nbsp;for more details.</p>
+<p>Second, we need the computer from which we're going to send commands to be connected to the same WiFi router as the bridge. The name of each router is on a sticker on the router; connect to that router. The password will be InternetOfThings.</p>
+<p>Once you have the address load the test app by visiting the following address in your web browser.</p>
+<p><code>http://&lt;bridge ip address&gt;/debug/clip.html</code></p>
+<p>For instance, because the IP address I found was 192.168.1.135, I used the following:</p>
+<p><code></code><code>http://192.168.1.135/debug/clip.html</code></p>
+<p>You should see an interface like this:</p>
+<p><img class="media-image attr__typeof__foaf:Image img__fid__9 img__view_mode__default attr__format__default attr__field_file_image_alt_text[und][0][value]__Screenshot hue API Debugger attr__field_file_image_title_text[und][0][value]__the interface you'll see when you load the test app" title="the interface you&amp;#039;ll see when you load the test app" src="http://developers.meethue.com/sites/default/files/CLIP%20API%20Debugger_0.png" alt="Screenshot hue API Debugger" /></p>
+<p>&nbsp;</p>
+<p>You'll see that you can choose between issuing GET, PUT, POST, and DELETE commands (just like we would expect for a RESTful programming interface). Just as a quick walk through of what we see:</p>
+<ol>
+<li><strong>URL</strong>: this is actually the local address of a specific resource (thing) inside the hue system. It could be light, a group of lights or many more things. This is the object you&rsquo;ll be interacting with in this command.</li>
+<li><strong>A body</strong>: this is the part of the message that&nbsp;describes what you want to change and how. Here you enter, in JSON format, the resource name and value you&rsquo;d like to change/add.</li>
+<li><strong>A method</strong>: here you have a choice of the 4 RESTful HTTP&nbsp;methods the hue call can use.
+<ul>
+<li><strong>GET</strong>: this is the command to fetch all information about the addressed resource</li>
+<li><strong>PUT</strong>: this is the command to modify an addressed resource</li>
+<li><strong>POST</strong>: this is the command to create a new resource inside the addressed resource</li>
+<li><strong>DELETE</strong>: this is the command to deleted the addressed resource</li>
+</ul>
+</li>
+<li><strong>Response</strong>: In this area you&rsquo;ll see the response to your command. Also in JSON format.</li>
+</ol>
+<p>Let's start with a really simple command:</p>
+<table>
+<thead>
+<tr>
+<th>Address</th>
+<th><code>http://&lt;bridge ip address&gt;/api/newdeveloper</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Body</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>Method</td>
+<td><code>GET</code></td>
+</tr>
+</tbody>
+</table>
+<p>That is, enter /api/newdeveloper as the URL (the IP address of the bridge will get automatically added for you) and click the GET button. This will create a GET request to the bridge to&nbsp;issue the "newdeveloper" command. This is a command on the hue bridge that fetches all information in the bridge. You should have seen some kind of response like this:</p>
+<p><img class="media-image attr__typeof__foaf:Image img__fid__10 img__view_mode__default attr__format__default attr__field_file_image_alt_text[und][0][value]__screen shot of hue API get info on your system attr__field_file_image_title_text[und][0][value]__get" title="get info on your hue system" src="http://developers.meethue.com/sites/default/files/Get%20info%20on%20your%20system.png" alt="screen shot of hue API get info on your hue system" /></p>
+<p>Which is kind of a bummer. But think about if a random person walked into your house and just asked for all of the information about the lights in your house. Not very secure. That is,&nbsp;you didn&rsquo;t get much back and that&rsquo;s because you&rsquo;re using an unauthorized username &ldquo;newdeveloper&rdquo;. We need to more securely authenticate with the bridge. Hue has a built in mechanism to do this that relies on you having&nbsp;<em>physical&nbsp;</em>access to the bridge. So create the following command:</p>
+<table>
+<thead>
+<tr>
+<th>Address</th>
+<th style="text-align: left;"><code>http://&lt;bridge ip address&gt;/api</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Body</td>
+<td><code>{"devicetype":"my_hue_app#android christine"}</code></td>
+</tr>
+<tr>
+<td>Method</td>
+<td><code>POST</code></td>
+</tr>
+</tbody>
+</table>
+<p>You can change the device type name as you wish.&nbsp;</p>
+<p>This command is basically asking the hue bridge to create a new resource inside <code>/api</code> (where usernames sit) with the stated&nbsp;properties. When you press the <code>POST</code> button you should get back an error message letting you know that you have to press the link button. This is our security step so that only apps you want to control your lights can. By pressing the button we prove that the user has physical access to the bridge. Press the link button on the bridge, then click&nbsp;<span>the </span><code>POST</code><span> button again, and you should see something like the following:</span></p>
+<p><span><img class="media-image attr__typeof__foaf:Image img__fid__12 img__view_mode__default attr__format__default attr__field_file_image_alt_text[und][0][value]__screen shot of success response locating bridge attr__field_file_image_title_text[und][0][value]__showing a for" title="showing a success response for locating bridge" src="http://www.developers.meethue.com/sites/default/files/SuccessResponse.png" alt="screen shot of success response of locating bridge" /></span></p>
+<p><span>That username is what you're going to use from now on. Copy it and put it somewhere (e.g., in a text file on your computer).</span></p>
+<p><span>Now if you do the first <code>GET&nbsp;</code>command again (but with your new username instead of "newdeveloper") you should get a whole lot more information about what lights you have and their states. This data is all in JSON format so can be easily processed by your applications.</span></p>
+<p><span>Glance through all of this information. It should tell you information about the lights you've connected to your bridge, and it should also give information about, for example, the room you created. There's also a lot of other information about the configuration of your bridge that you might want to eventually use inside a program.</span></p>
+<p><span>Alright. Let's make the lights DO something.</span></p>
+<p><span>Each light has its own URL. You can see what lights you have by scanning what you got back with the above command but you can focus in on the lights using the following command:</span></p>
+<table>
+<thead>
+<tr>
+<th>Address</th>
+<th><code>http://&lt;bridge ip address&gt;/api/&lt;username&gt;/lights</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Body</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>Method</td>
+<td><code>GET</code></td>
+</tr>
+</tbody>
+</table>
+<p>You should get a JSON response with all the lights in your system and their names.</p>
+<p>Now let&rsquo;s get information about a specific light. The light with id 1. [Hint: your light might not have id 1. Take a look at the information you got back in the previous step to see what ID you should use for your light.]</p>
+<table>
+<thead>
+<tr>
+<th>Address</th>
+<th><code>http://&lt;bridge ip address&gt;/api/&lt;username&gt;/lights/1</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Body</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>Method</td>
+<td><code>GET</code></td>
+</tr>
+</tbody>
+</table>
+<p>You should notice that the only thing differing in the previous two commands is the last part of the URL. The second one is just more specific. In this response you can see all of the resources this light has. The most interesting ones are inside the state object as these are the ones we&rsquo;ll have to interact with to control the light.</p>
+<p>Lets&rsquo; start with the &ldquo;on&rdquo; attribute. This is a very simple attribute that can have 2 values: true and false. So let&rsquo;s try turning the light off.</p>
+<table>
+<thead>
+<tr>
+<th>Address</th>
+<th><code>http://&lt;bridge ip address&gt;/api/&lt;username&gt;/lights/1/state</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Body</td>
+<td><code>{"on":false}</code></td>
+</tr>
+<tr>
+<td>Method</td>
+<td><code>PUT</code></td>
+</tr>
+</tbody>
+</table>
+<p>Looking at the command you are sending we&rsquo;re addressing the &ldquo;state&rdquo; object of light one and telling it to modify the &ldquo;on&rdquo; value inside it to false (or off). When you press the <code>PUT</code> button the light should turn off. Change the value in the body to true and the light will turn on again.</p>
+<p>Now let&rsquo;s do something a bit more fun and start changing some colors. Enter the command below.</p>
+<table>
+<thead>
+<tr>
+<th>Address</th>
+<th><code>http://&lt;bridge ip address&gt;/api/&lt;username&gt;/lights/1/state</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Body</td>
+<td><code>{"on":true, "sat":254, "bri":254,"hue":10000}</code></td>
+</tr>
+<tr>
+<td>Method</td>
+<td><code>PUT</code></td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<p>We&rsquo;re interacting with the same &ldquo;state&rdquo; attributes here but now we&rsquo;re modifying a couple more attributes. We&rsquo;re making sure the light is on by setting the &ldquo;on&rdquo; resource to true. We&rsquo;re also making sure the saturation (intensity) of the colors and the brightness is at its maximum by setting the &ldquo;sat&rdquo; and &ldquo;bri&rdquo; resources to 254. Finally we&rsquo;re telling the system to set the &ldquo;hue&rdquo; (a measure of color) to 10000 points (hue runs from 0 to 65535). Try changing the hue value and keep pressing the PUT button and see the color&nbsp;of your light changing running through different colors.</p>
+<p>So this is fun. But we don't want to have to use this clunky interface to manually change our light. We want to write apps that will do it automatically! (In fact, this is all that's going on behind the scenes of the Hue app we were using before... when you interact with the controls on the screen, the app is issuing similar RESTful commands to the bridge.)</p>
+<h3>Programming our Own App</h3>
+<p>So next step we want to be able to create our own (better!) Android app to control our lights. To do this, we need to use the entire Hue SDK (Software Development Kit). To get access to this, Philips asks you to register with their site as a developer (it's free!). Go to <a href="https://www.developers.meethue.com/philips-hue-api">this</a> page and click "Register" in the upper right corner.</p>
+<p>Once you're logged in, let's head over to the pages about the Android SDK. They're <a href="https://www.developers.meethue.com/documentation/java-multi-platform-and-android-sdk">here</a>. Remember this website (or remember that the link is right here); as your programming gets more advanced, you're going to want to come back here for information about how to use the SDK (what things you can do and how to do them). However, we're not going to start from scratch (this time). Philips has provided a simple starter example for Android. We have to go to github to get it. We're going to learn more about interacting with github and other source repositories next week. For now, just Click <a href="https://github.com/PhilipsHue/PhilipsHueSDK-Java-MultiPlatform-Android">here</a>. Click on the green "Clone or Download" button, then select "Download ZIP". When the Zip file finishes downloading, double click the archive to unzip it.</p>
+<p>Next, open Android Studio. Assuming you did your first Android app in this version of Android Studio, you should still see it there. That's fine. Go to <strong>File &gt; New &gt; Import Project</strong>. Browse to the folder that you just unzipped. It should be called "PhilipsHueSDK..." (it's likely in your Downloads folder). Expand the top level folder, and click on the folder called "QuickStartApp". This is the Android project. Notice that, inside this folder, there's something called "project.properties". This is what Android Studio is going to use as information about how to set up the project. Once you've highlighted "QuickStartApp", just click "OK". Android Studio is going to ask you where you want to store the project files. Unless you know what you're doing and you're doing it for a reason, just accept the default suggestion (click "Next"). Accept all of the defaults (Android Studio is importing this project from an older IDE, so it has to set some things up automatically for you). It's going to take Android Studio a little time to get all of this set up for you. Just hang out. If, when its finished, Android Studio asks you to confirm some upgrades, agree to them. Android Studio will show you a text file explaining what it had to do to import the project. You can scan through it if you want, but you can also just close it and get on with things. (Be careful to close just the text file and not the whole project window.)</p>
+<p>Now you should be looking at a pretty familiar view: one not unlike the view we had for our first Android app. You can click around and look at things (for instance the activity_main.xml will show you the basic layout; the MyApplicationActivity.java will be the main piece of the java code, etc.). The quickest way to start to get familiar with this app, though, will likely be to run it.</p>
+<p>When you run the project on your Android device (or in the emulator), the first thing the app will ask you to do is connect to a bridge. Use the MAC address information on the bottom of the bridge to make sure you get the right one. Then you'll have to press the link button on the bridge again (when prompted) to give the app permission to control the bridge. This is a super simple app: all it has is a single button that, when pressed, sets all of the lights connected to the bridge to have random states. Let's take a look at the code for that in a bit more detail.</p>
+<p>Open the MyApplicationActivity.java file. If you look at lines 40-42, you'll see the following code;</p>
+<pre>Button randomButton;<br />randomButton = (Button) findViewById(R.id.<span>buttonRand</span>);<br />randomButton.setOnClickListener(<span>new </span>OnClickListener() {<br />    <span>@Override<br /></span><span>    </span><span>public void </span>onClick(View v) {<br />        randomLights();<br />    }<br />});</pre>
+<p>This actually should be reasonably familiar to you. The first line is just declaring a variable that can hold a Button view. The second line access that automatically generated R class to get a handle the Random button (you can poke around in the code to remind you where all of this is declared (activity_main.xml is where most of that is). The third line associates the randomLights() method with any "click" of the random button. This is just a different way of associating that click behavior than we did in the first app. All it means is that anytime the button is clicked, the randomLights() method will be called.</p>
+<p>The definition of the randomLights method is just below these lines in the file. Instead of creating RESTful calls directly, it uses the Philips provided API, which hides the restful interface. Navigating the API on your own requires looking at the Javadocs. You can download them <a href="https://github.com/PhilipsHue/PhilipsHueSDK-Java-MultiPlatform-Android/blob/master/Documentation/Javadoc.zip?raw=true">here</a>. If you unzip that download, you'll see two subfolders. The more comprehensive one is&nbsp;huesdkresources-javadoc. Inside that folder, open the file index.html. That will open the Javadocs for the Philips SDK in your browser.</p>
+<p>The code for setting random lights looks&nbsp;like this:</p>
+<pre><span>public void </span>randomLights() {<br />    PHBridge bridge = <span>phHueSDK</span>.getSelectedBridge();<br /><br />    List&lt;PHLight&gt; allLights = bridge.getResourceCache().getAllLights();<br />    Random rand = <span>new </span>Random();<br />    <br />    <span>for </span>(PHLight light : allLights) {<br />        PHLightState lightState = <span>new </span>PHLightState();<br />        lightState.setHue(rand.nextInt(<span>MAX_HUE</span>));<br />        <span>// To validate your lightstate is valid (before sending to the bridge) you can use:  <br /></span><span>        // String validState = lightState.validateState();<br /></span><span>        </span>bridge.updateLightState(light, lightState, <span>listener</span>);<br />        <span>//  bridge.updateLightState(light, lightState);   // If no bridge response is required then use this simpler form.<br /></span><span>    </span>}<br />}</pre>
+<p>It first access the bridge (you set up this connection when you select&nbsp;the bridge to link it when you first use the app). To get familiar with how the Javadocs work, let's take a look at PHBridge. Going back to the browser where you opened index.html, in the second panel on the left hand side, PHBridge should be near the top. If you click on that link the main panel of the browser should now show you the Javadoc for the PHBridge interface. The bulk of this is the list of methods ("Method Summary") that you can call on anything of type PHBridge.</p>
+<p>Now look at the second line of the randomLights method:</p>
+<pre>List&lt;PHLight&gt; allLights = bridge.getResourceCache().getAllLights();</pre>
+<p>This line declares a variable called allLights. Its "type" is List&lt;PHLight&gt; (which means it's a list of things of type PHLight). This line of code then "assigns" a value to the allLights variable by making a method call on the variable bridge (which is of type PHBridge). Specifically, the code first calls the method getResourceCache(). Heading back over to our Javadocs, we see that this method "<span>Enables reading bridge data from runtime cached storage. This is used to obtain the PHBridgeResourcesCache&nbsp;</span><span>object that contains the last read state of the bridge." It returns something of typePHBridgeResourcesCache. We can click on the link for the return type and get more information about what methods are available for that type. Specifically, we can see that one of the methods available is the getAllLights() method, which returns something of type List&lt;PHLight&gt; (which matches our declared allLights variable!).&nbsp;</span></p>
+<p><span>Take a few minutes and walk through the rest of this code. You can (and should!) try matching the code against the Javadoc descriptions of what the methods are expected to do. Some of these methods are not part of the Philips SDK and instead are part of basic Java. Luckily, there are great Javadocs for that, too; go <a href="https://docs.oracle.com/javase/8/docs/api/">here</a>&nbsp;and look for the class by name on the left hand side. For instance, you can find Random, which we're using here to generate some random numbers.</span></p>
+<p><span>If you don't have much programming experience, then all of this might be a little daunting to you, but the rest of this method just cycles through all of the lights that the bridge returns (it uses a "for" loop to do this; "</span><span>for </span>(PHLight light : allLights)"&nbsp;<span>simply means to do the following stuff for each "light" in the list "allLights").</span></p>
+<p><span>Once you're reasonably comfortable going back and forth between this code and the Javadocs, try to set something other than the Hue. For instance, check out the setBrightness and setSaturation methods in PHLightState.</span></p>
+<h3><span>Making it Your Own (Optional)</span></h3>
+<p><span>The above is the "required" portion of this assignment. But if you've gotten through all of that, spend sometime making the app different. In doing this, accessing the documentation of the Android SDK will be useful. It's <a href="https://developer.android.com/reference/packages.html">here</a>. Here are some suggestions:</span></p>
+<ul>
+<li><span>Create slidebars (it's called a "SeekBar" in Android) to adjust the hue, brightness and saturation. To find out more about a SeekBar, check out the android.widgets package (or specifically, the <a href="https://developer.android.com/reference/android/widget/SeekBar.html">android.widgets.SeekBar</a> class). You'll want to create a listener that is notified when the value of the SeekBar changes; you can connect that listener to the SeekBar using the&nbsp;<a href="https://developer.android.com/reference/android/widget/SeekBar.html#setOnSeekBarChangeListener(android.widget.SeekBar.OnSeekBarChangeListener)">setOnSeekBarChangeListener</a>&nbsp;method.</span></li>
+<li><span>Change the trigger for random light settings from a button press to shaking the phone. To do this, you'll need to detect shaking, which means you'll need access to the sensors on the device (also, don't try to test this on the emulator... :) ).</span></li>
+</ul>
+<p><span>In general, let your creativity guide you. Ask for help. And you can always google for hints! (For instance, a quick google search of "android detect shake" brings up this <a href="http://jasonmcreynolds.com/?p=388">link</a>&nbsp;and this <a href="http://joerichard.net/android/android-shake-detector/">link</a>.)</span></p>
+</body> </html>
