@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title></title>
+</head>
+<h1>Do It Yourself: A Multipart Assignment</h1>
+<h4>Christine Julien, The University of Texas at Austin</h4>
+<p>&nbsp;</p>
+
+<p>Let's put together our new found knowledge and see if we can write an Android app to toggle (turn on and off) an LED on a breadboard. To accomplish this application, you will need:</p>
+<ul>
+<li>A partner</li>
+<li>An Android phone</li>
+<li>A computer with Android Studio</li>
+<li>A raspberry pi</li>
+<li>A computer with VNC to the RPi</li>
+<li>A GPIO breakout kit</li>
+<li>A breadboard</li>
+<li>An LED</li>
+<li>A 390 ohm resistor (please use the resistor correctly, otherwise, we risk the RPi)</li>
+</ul>
+<p>You should create an Android app that has two buttons, one labeled "on" and one labeled "off". These should be used to turn an LED on the breadboard ON (and OFF) using a bluetooth connection between&nbsp;the Android app and&nbsp;the RPi.</p>
+<p><a href="https://pimylifeup.com/wp-content/uploads/2015/09/Raspberry-Pi-GPIO-simple-led-circuit.jpg">This</a> circuit diagram is the only major hint I'm giving, just because we haven't learned a ton about circuits and resistors and their purpose, so it would be difficult to get right. Of course, you're using the breakout board, so you'll need to map those pins onto those on your breakout board.</p>
+<p>The other minor hint is to start the Android program from the one we wrote in the communication module. But you need the buttons in the Android app to toggle, too. That is, you want the ON button to be enabled only when the LED is off and you want it to be disabled (not clickable) when the LED is on. The reverse should be true for the OFF button.</p>
+<h3>[Optional] Have some extra time?</h3>
+<p>Here's another step if you have some extra time. Build the temperature or motion or light sensor back up on the breadboard (without affecting the LED at all). Add a button to your Android application to retrieve the temperature value. The LED on/off buttons should continue to work exactly the same as above.</p>
+</body> </html>
