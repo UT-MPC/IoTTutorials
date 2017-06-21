@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title></title>
+</head>
+<h1>Introduction to Testing in Android</h1>
+<h4>Christine Julien, The University of Texas at Austin</h4>
+<p>&nbsp;</p>
+<p>In this tutorial, we will explore unit testing in Android Studio. This tutorial is based around <a href="http://www.vogella.com/tutorials/AndroidTesting/article.html">this one</a>. That tutorial<span>&nbsp;is published under the&nbsp;</span><a href="http://creativecommons.org/licenses/by-nc-sa/3.0/de/deed.en">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Germany</a><span> license; the changes below are relatively minor in presentation.</span></p>
+<p>One of the great things about Android (but also a major headache) is that Android can run on a lot of different devices, and those devices can be very different from one another. Testing is imperative (and if you're really serious about it, you want to test on many different devices).</p>
+<p>Unit testing in Android comes in two forms: <strong>local unit testing</strong> (which requires only the Java Virtual Machine (JVM)) and <strong>instrumented unit testing</strong> (which tests in the context of the Android system). The former are much much faster because they don't have all of the overhead of the Android system. As a general rule, you should do as much as possible with local tests and switch to running tests on Android only when you absolutely need something about Android. However, because your application is written for Android, it often makes use of things that are "in" Android. To test them, therefore, you will need to provide a&nbsp;<strong>mock</strong> of the Android dependency, which often makes use of a&nbsp;<em>mocking framework</em>, e.g., <a href="http://site.mockito.org/">Mockito</a>.</p>
+<h3>What to Test&nbsp;</h3>
+<div class="sect2">
+<div class="paragraph">
+<p>Your goal in testing is to build up a <strong>test suite</strong>. In determining what tests to include in this suite, you should think about the distribution of tests so that you get good <em>coverage</em>. As a general rule of thumb, your tests should focus the majority of their attention on the "business logic" of the&nbsp;application. The majority of the tests should focus on the stability of your code base. Then there should be a good proportion of functional tests to make sure that the entire application works. Finally, add some&nbsp;<em>cross-functional tests</em> if the application uses a lot of other components. One suggested distribution of tests is depicted in the following pyramid:</p>
+</div>
+<div class="imageblock">
+<div class="content"><img style="display: block; margin-left: auto; margin-right: auto;" src="http://www.vogella.com/tutorials/AndroidTesting/img/xtestingstrategy.png.pagespeed.ic.H8m54eQ-Y8.webp" alt="Testing Strategy for Android" /></div>
+</div>
+<div class="paragraph">
+<p>Because you want people to run your application on real devices, you should test it on at least one device. Because there are so many Android devices out there, you should test on a device that has the least capabilities of the devices you have. This will help ensure that the app will run on a wider variety of devices. You should also test (if possible) on a more capable device to see how the app&nbsp;works on devices with higher screen resolution, faster processor, different chips for sensing, etc.</p>
+<h3>Android Studio Tools for Testing</h3>
+<div class="paragraph">
+<p>The <a href="https://google.github.io/android-testing-support-library/">Android Testing Support library</a> (ATSL) project from Google provides tooling for Android testing. This library is a wrapper around JUnit 4; it provides a JUnit 4-compatible test runner called AndroidJUnitRunner. The library also provides the&nbsp;<em>Espresso test framework</em>, which can be used to test the User Interface of your application and the&nbsp;<em>UI Automator test framework</em>, which supports cross-application functional tests.</p>
+<p>If you run local tests (and you will), The ATSL creates a special version of the android jar file to provide the "mocking" of the Android system described above. This modified jar is provided to the unit test to ensure that all fields, methods, and classes referenced from Android are available. Any call to the Android mocked jar file results in a java&nbsp;<em>Exception</em>, though you can configure the tool to do something different.</p>
+<p>AndroidJunitRunner also provides access to the instrumentation API, via the InstrumentationRegistry class. The most important capability from this registry is the ability to get the <i>context</i> for your application, which you will likely reference in your tests.</p>
+<h3>Android Test Organization</h3>
+<div class="paragraph">
+<p>The following is the default directory structure for your application and test code:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>app/src/main/java </code>- contains your source code of your main application build</p>
+</li>
+<li>
+<p><code>app/src/test/java</code>&nbsp;- contains any unit tests that&nbsp;can run on just the JVM</p>
+</li>
+<li>
+<p><code>app/src/androidTest/java</code>&nbsp;- contains any tests that&nbsp;should run on an Android device</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you follow this convention (and you should), the Android build system will run&nbsp;your tests on the correct target based on the test's location (JVM or Android device).</p>
+<h3>Unit Tests in Android</h3>
+<div class="sect2">
+<div class="paragraph">
+<p>A unit test verifies the functionality of a certain component in isolation. For instance, consider&nbsp;a button in an Android activity that is used to start another activity. A unit test would determine whether the corresponding intent was issued, but it would not check whether the second activity was started. That's what it means to execute <em>in isolation</em>.&nbsp;</p>
+<p>OK. We're going to write some tests. But first, we need a project. Open Android Studio, then select "File &gt; New &gt; Project from Version Control &gt; GitHub". In the dialog box that opens, paste the following&nbsp;Git Repository URL:&nbsp;<a href="https://github.com/chr1s77/TemperatureConverter.git">https://github.com/chr1s77/TemperatureConverter.git</a>. Leave the Parent Directory and Directory Name&nbsp;with their default values. Click "Clone". If you get some errors, just ignore them (hit cancel). Once the project is loaded into Android Studio, go ahead and run it (in an emulated device). If Android Studio asks whether you want to add some files to version control, just say "no". Once the application starts up, you should see an app that has an entry field for some text, two radio buttons, and a "Convert" button. It just converts temperatures back and forth between Fahrenheit and Celsius. Play with it if you want.</p>
+<p>OK. Now to testing.&nbsp;<span>To use JUnit tests in&nbsp;your Android application, you need to add JUnit&nbsp;as a dependency in&nbsp;your Gradle build file. In the project window in Android Studio, select "Gradle Scripts" and open the build.gradle file that is associated with your app (it will say "(Module: app)" after build.gradle). Here, you should see something like:</span></p>
+<pre>dependencies {<br />    compile fileTree(<span>dir</span>: <span>'libs'</span>, <span>include</span>: [<span>'*.jar'</span>])<br />    androidTestCompile(<span>'com.android.support.test.espresso:espresso-core:2.2.1'</span>, {<br />        exclude <span>group</span>: <span>'com.android.support'</span>, <span>module</span>: <span>'support-annotations'<br /></span><span>    </span>})<br />    compile <span>'com.android.support:appcompat-v7:23.1.1'<br /></span><span>    </span>compile <span>'com.android.support.constraint:constraint-layout:1.0.2'<br /></span><span>    </span>testCompile <span>'junit:junit:4.12'<br /></span>}</pre>
+</div>
+</div>
+</div>
+</div>
+<p>These are the project's dependencies. You'll see that there are dependencies for both "testCompile" (that's the local unit tests) and "androidTestCompile" (those are the integrated tests). This is perfect. We're ready to test.</p>
+<p>Find the test directory (you want just test, not androidTest) under app in the Project window. You'll see there is already a class defined called "ExampleUnitTest.java". Let's open that up and take a look.</p>
+<p>You should see something a bit like this:</p>
+<pre><span>package </span>com.example.temperatureconverter;<br /><br /><span>import </span><span>org.junit.Test</span>;<br /><span>import static </span>org.junit.Assert.*;<br /><br /><span>/**<br /></span><span> * Example local unit test, which will execute on the development machine (host).<br /></span><span> *<br /></span><span> * </span><span>@see </span><span>&lt;a href="http://d.android.com/tools/testing"&gt;</span><span>Testing documentation</span><span>&lt;/a&gt;</span><span><br /></span><span> */<br /></span><span>public class </span>ExampleUnitTest {<br />    <span>@Test<br /></span><span>    </span><span>public void </span>addition_isCorrect() <span>throws </span>Exception {<br />        <span>assertEquals</span>(<span>4</span>, <span>2 </span>+ <span>2</span>);<br />    }<br />}</pre>
+<p>Here the class is called "ExampleUnitTest". This class has a single method called "addition_isCorrect". This method is <em>annotated</em> with "@Test", which is a note to JUnit that this is a test method. The method throws an Exception, which is required of all Tests. Finally, the method simply calls another method (assertEquals), which returns true if the two values passed (4 and 2+2) are the same. In its current state, this test will return true. Let's try it.&nbsp;Right click on "ExampleUnitTest" in the project window. Find "Run ExampleUnitTest" in the menu (almost 2/3 of the way down), and select it. This will execute the test, and you will pretty quickly see a message in the Run console that your one test passed. Now change the code to make the test fail (for example, change 4 to 3). You will now see a message that one test failed. You will also get a little information about why it failed. it looks something like this:</p>
+<pre>java.lang.AssertionError: <br />Expected :3<br />Actual :4<br /> &lt;Click to see difference&gt;</pre>
+<p>Followed by a&nbsp;<em>stack trace</em>, which tells you the sequence of method calls that led to the failure.</p>
+<p>All we're doing in this example test is checking whether Java has correctly implemented "+". Not that interesting. Let's check something more meaningful.</p>
+<p>In addition to organizing the local unit tests in a separate directory from the instrumented unit tests, you can also have multiple testing classes to keep tests about a certain element together. This organization can be really useful as the size of your test suite grows.</p>
+<p>Let's leave the addition example in the ExampleUnitTest class and add a new test class. If you've already poked around in the example code, you'll have found that the "work" is all done in the ConverterUtil class, while the MainActivity class is really just doing the setup of the UI and interacting with Android. So let's make a class to test ConverterUtil, specifically, let's test whether it's converting temperatures correctly.</p>
+<p>While you have "com.example.TemperatureConverter (test)" highlighted in the project window, select "File &gt; New &gt; Java class". Name the new class ConverterUtilTest, and leave all of the rest of the defaults. Click OK. Say "Yes" if asked whether you want to add the file to git (you're not going to check these back in, but it's just good practice). Android Studio will create the new class for you and add the class declaration in the source file.</p>
+<p>Now, let's add a test to the class. In fact, let's add two tests. One called testConvertFahrenheitToCelsius and one called testConvertCelsiusToFahrenheit.</p>
+<p>We're going to use boiling point as our test case. Boiling point in Celsius is 100; in Fahrenheit, it's 212. Based on what we learned in the ExampleUnitTest, I think you can write this test. Give it a shot. One thing you'll need to know is how to invoke the conversion methods. Look inside of ConverterUtil.java. You'll see the two methods. You call them like this (this example would "return" a float value that is the Celsius equivalent to 76 degrees Fahrenheit):</p>
+<pre><span>float celsiusRoomTemp = ConverterUtil.convertFahrenheitToCelsius(76);</span></pre>
+<p>Did you write the tests? Did they succeed? Click <a title="ConverterUtilTest Solution" href="https://utexas.instructure.com/courses/1198798/pages/ConverterUtilTest%20Solution?titleize=0" data-api-endpoint="https://utexas.instructure.com/api/v1/courses/1198798/pages/ConverterUtilTest%2520Solution" data-api-returntype="Page">here</a> if you think you need to check against my solution. These tests will succeed, but there's something we should do to make them more robust in practice. In Java the float conversion may not be precise. That is, our conversion might fail just because the two numbers differ at some place value way to the right of the decimal point. We have to decide what is "good enough" for our test. Luckily, JUnit provides an assertEquals method with "tolerance". That is, we can replace</p>
+<pre><span>assertEquals</span>(boilingPointFExpected, boilingPointFActual);</pre>
+<p>with</p>
+<pre><span>assertEquals</span>(boilingPointFExpected, boilingPointFActual, 0.001);</pre>
+<p>if we want to just require the two values to be the same up to the thousandths place.</p>
+<p>You could also put a label as the first input to assertEquals, just to make the test output more readable. The entire thing would then look like this:</p>
+<pre><span>assertEquals</span>(<span>"Conversion from celsius to fahrenheit failed"</span>, <br />        boilingPointFExpected, boilingPointFActual, 0.001);</pre>
+<p>These tests just ran in the JVM. The really didn't do anything with Android. Let's take a look in the androidTest directory. There, you'll see a class called ExampleInstrumentedTest.java. It contains a single test; this test just checks whether we're running in the right "context". Let's look a little more at running instrumented tests...</p>
+<h3>Instrumented Tests in Android</h3>
+<p>The Android testing API provides hooks into the Android component and application life cycle. These hooks are called the <em>instrumentation API</em> and allow your tests to control the life cycle and user interaction events for your application.</p>
+<div class="sect2">
+<div class="paragraph">
+<p>Under normal circumstances, your application cannot control the life cycle events. Instead, the user drives the application. For example, when&nbsp;Android creates your activity, the&nbsp;onCreate()&nbsp;method is called. When the user clicks a button, the code you wrote to respond to such an event is triggered. The instrumentation API, however, allows you to control these events in your test code. Your test code can start an activity or trigger other UI events. Your test code can even call finish() then restart the activity to make sure that the activity state is correctly restored. &nbsp;</p>
+</div>
+<div class="paragraph">
+<p>Instrumented unit tests have access to the real device and its resources and are useful to test functionality that&nbsp;cannot be easily mocked by mocking frameworks.&nbsp;An instrumentation-based test class allows you to send key events (or touch events) to the application under test. The Espresso framework hides the instrumentation API behind a usable interface to make it easier to write these instrumented unit tests.</p>
+<div class="sect2">
+<div class="paragraph">
+<p>The InstrumentationTestRunner&nbsp;is the base test runner for Android tests. This test runner starts and loads the test methods. It communicates with the Android system using the Instrumentation API. If you start a test for an Android application, the Android system kills any process of the application under test and then loads a new instance. It does not start the application, this is the responsibility of the test methods. That is, the&nbsp;test method controls the life cycle of the components of the application. The test runner does&nbsp;call the onCreate() method of the application and activity under test during its initialization.</p>
+</div>
+</div>
+<div class="sect2"><span>A </span><em>mock object</em><span> is a dummy implementation for an interface or a class in which you define the output of certain method calls. Mock objects are configured to perform a certain behavior during a test. They typically record the interaction with the system.</span></div>
+<div class="sect2">
+<div class="sect2">
+<div class="paragraph">
+<p>You can create mock objects manually (via code) or use a mock framework create them. Mock frameworks allow you to create mock objects at runtime. The classical example for a mock object is a data provider. In production, the implementation connects to a real data source, but for testing, a mock object simulates the data source and ensures that the testing conditions are always the same (so that if a test fails it always fails).</p>
+<div class="paragraph">
+<p><em>Mockito</em> is a popular mock framework that&nbsp;can be used in conjunction with JUnit. Mockito allows you to create and configure mock objects; it simplifies the development of tests for classes with external dependencies significantly. If you use Mockito in tests you typically: mock away external dependencies and insert the mocks into the code under test; execute the code under test; then validate that the code executed correctly.</p>
+<div class="paragraph">
+<p>Mockito provides a couple of options&nbsp;to create mock objects: using the static mock()&nbsp;method or using the @Mock annotation. If you use the @Mock annotation, you must trigger the creation of mocked&nbsp;objects. The Mockito rule allows this by invoking the static method MockitoAnnotation.initMocks(this)&nbsp;to populate the annotated fields. Alternatively you can use @RunWitn(MockitoJUnitRunner.class).&nbsp;</p>
+<p>The following figure shows an example use of the @Mock annotation and the Mockito rule.</p>
+<p><img src="https://utexas.instructure.com/courses/1198798/files/42568816/preview" alt="Screen Shot Mockito.png" data-api-endpoint="https://utexas.instructure.com/api/v1/courses/1198798/files/42568816" data-api-returntype="File" /></p>
+<p>Notice that the test is actually independent of the object mocking.</p>
+</div>
+<div class="paragraph">Mockito allows you to configure the return values of mocks. Unspecified return values are "empty" values (default values based on the type, e.g., "null" for objects, 0 for numbers, false for booleans, etc.).</div>
+<div class="paragraph">
+<p><span>Mocks can also return different values depending on the arguments passed into a method. This is enabled using the when(...).thenReturn(...) method chain.&nbsp;</span><span>As an example, consider the following code:</span></p>
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+<span class="directive">public</span> <span class="type">void</span> test1()  {
+        <span class="comment">//  create mock</span>
+        MyClass test = mock(MyClass.class);
+
+        <span class="comment">// define return value for method getUniqueId()</span>
+        when(test.getUniqueId()).thenReturn(<span class="integer">43</span>);
+
+        <span class="comment">// use mock in test....</span>
+        assertEquals(test.getUniqueId(), <span class="integer">43</span>);
+}</code></pre>
+</div>
+<div class="listingblock"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+The when... thenReturn... portion of this says that, when the method uniqueID is called on the mock test, the method should return 43.</div>
+<div class="sect2"></div>
+<div class="sect2">As another example, consider the following:</div>
+<div class="sect2">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+<span class="directive">public</span> <span class="type">void</span> testReturnValueDependentOnMethodParameter()  {
+        <span class="predefined-type">Comparable</span>&lt;<span class="predefined-type">String</span>&gt; c= mock(<span class="predefined-type">Comparable</span>.class);
+        when(c.compareTo(<span class="string"><span class="delimiter">"</span><span class="content">Mockito</span><span class="delimiter">"</span></span>)).thenReturn(<span class="integer">1</span>);
+        when(c.compareTo(<span class="string"><span class="delimiter">"</span><span class="content">Eclipse</span><span class="delimiter">"</span></span>)).thenReturn(<span class="integer">2</span>);
+        assertEquals(<span class="integer">1</span>, c.compareTo(<span class="string"><span class="delimiter">"</span><span class="content">Mockito</span><span class="delimiter">"</span></span>));
+}</code></pre>
+<p>In this case, the compareTo method of the mocked object c will return either 1 or 2 depending on what it is compared to (i.e., "Mockito" or "Eclipse").</p>
+<p><span>Mockito keeps track of all the method calls to the mock object and the&nbsp;parameters passed in those calls. You can then use the verify() method on the mock object to verify that conditions were met. For instance, you could verify that a method was called with certain parameters or that a method was called a certain number of times.</span><span> This kind of testing is sometimes called </span><em>behavior testing</em><span>. Behavior testing does not check the result of a method call, but it checks instead how the method was called. The following is an example:<br /></span></p>
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+<span class="directive">public</span> <span class="type">void</span> testVerify()  {
+    <span class="comment">// create and configure mock</span>
+    MyClass test = Mockito.mock(MyClass.class);
+    when(test.getUniqueId()).thenReturn(<span class="integer">43</span>);
+
+    <span class="comment">// call method testing on the mock with parameter 12</span>
+    test.testing(<span class="integer">12</span>);
+    test.getUniqueId();
+    test.getUniqueId();
+
+    <span class="comment">// now check if method testing was called with the parameter 12</span>
+    verify(test).testing(ArgumentMatchers.eq(<span class="integer">12</span>));
+
+    <span class="comment">// was the method called twice?</span>
+    verify(test, times(<span class="integer">2</span>)).getUniqueId();<br />}</code></pre>
+<p>In this example, we mock the object test, and we specify that the getUniqueID method will always return 43. The first "verify" call checks to make sure that the method testing() was called with the parameter 12. The second "verify" call checks to make sure that the method getUniqueId() was called exactly twice.</p>
+<p>Let's get some practice writing an instrumented test using Mockito.</p>
+<p><span>In Android Studio, create a new Android application (File &gt; New &gt; New Project). Let's call it ContextMock. You can leave example.com as the domain. Use the default Minimum SDK, and select Empty Activity. MainActivity as the activity name is fine. Click Finish. We're going to use the completely empty project but add a second class to it. Create a class called Util (File &gt; New &gt; Java Class, then put Util in the Name field and click OK). Add the following method body to the Util class:</span></p>
+<pre><span>package </span>com.example.contextmock;<br /><br /><span>import </span>android.content.Context;<br /><span>import </span>android.content.Intent;<span><br /></span><span><br /></span><span>public class </span>Util {<br />    <span>public static </span>Intent createQuery(Context context, String query, String value) {<br />        <span>// Reuse MainActivity for simplification<br /></span><span>        </span>Intent i = <span>new </span>Intent(context, MainActivity.<span>class</span>);<br />        i.putExtra(<span>"QUERY"</span>, query);<br />        i.putExtra(<span>"VALUE"</span>, value);<br />        <span>return </span>i;<br />    }<br />}</pre>
+<p><span>All this method does is create a new Intent (which actually just encapsulates the MainActivity class so we don't have to define a new one), and puts a String "QUERY" and a String "VALUE" inside the intent. (This is very similar to how we launched the intent in our Android tutorial.)</span></p>
+<p><span>Next, we need to inform Gradle that we're wanting to use Mockito. That is, we need to add a dependency in our app's Gradle build file. Do you remember where it is? Inside the dependencies section, we need to add these lines:</span></p>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// required if you want to use Mockito for unit tests</span>
+testCompile <span class="string"><span class="delimiter">'</span><span class="content">org.mockito:mockito-core:2.7.22</span><span class="delimiter">'</span></span>
+<span class="comment">// required if you want to use Mockito for Android tests</span>
+androidTestCompile <span class="string"><span class="delimiter">'</span><span class="content">org.mockito:mockito-android:2.7.22</span><span class="delimiter">'</span></span></code>&nbsp;</pre>
+<p>Android Studio will tell you (now, or maybe later) that the project settings are out of sync with Gradle and ask if you want to Sync them. You should click the Sync link when you see this happen. Until you do, Android Studio won't be able to find the Mockito dependencies.</p>
+<p>OK. Now we're ready to create a test that uses mocked objects. Let's create a unit test that checks whether the intent contains the correct extras. To do this, we're going to mock the Context object using Mockito.</p>
+<p>Highlight the androidTest folder in your project. Then select File &gt; New &gt; JavaClass and create a new test class called UtilTest. Next, we need to add the @RunWith(MockitoJUnitRunner.class) annotation just above the class declaration (i.e., the line that says public class UtilTest). This annotation announces that we want Mockito to create mock objects.</p>
+<p>Now let's add the following test:</p>
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+<span class="directive">public</span> <span class="type">void</span> shouldContainTheCorrectExtras()  <span class="directive">throws</span> <span class="exception">Exception</span> {
+    <span class="predefined-type">Context</span> context = mock(<span class="predefined-type">Context</span>.class);
+    Intent intent = <span class="predefined-type">Util</span>.createQuery(context, <span class="string"><span class="delimiter">"</span><span class="content">query</span><span class="delimiter">"</span></span>, <span class="string"><span class="delimiter">"</span><span class="content">value</span><span class="delimiter">"</span></span>);
+    assertNotNull(intent);
+    Bundle extras = intent.getExtras();
+    assertNotNull(extras);
+    assertEquals(<span class="string"><span class="delimiter">"</span><span class="content">query</span><span class="delimiter">"</span></span>, extras.getString(<span class="string"><span class="delimiter">"</span><span class="content">QUERY</span><span class="delimiter">"</span></span>));
+    assertEquals(<span class="string"><span class="delimiter">"</span><span class="content">value</span><span class="delimiter">"</span></span>, extras.getString(<span class="string"><span class="delimiter">"</span><span class="content">VALUE</span><span class="delimiter">"</span></span>));
+}</code></pre>
+<p>This test mocks the Context (which would normally be provided by Android). Then it calls the CreateQuery method in the Util class (that's the thing we're testing!). Then we do some checks on the Intent that we created. First, we assert that it's not null (i.e., that it got created). Then we ask the Intent for its extras and verify that they're not null. Then we check to make sure the extras have the right values.</p>
+<p>You can run this test now (you should). Once the test completes, you should get a message in the Android Studio console telling you that the test was successful. Modify the Util class so that your test will fail (e.g., swap&nbsp;the strings "query" and "value" that are passed to the extras or "forget" to pass one of them, etc.). Run the test again, just so you get used to what it looks like when it fails.</p>
+<p>Here's one example to show you how powerful Mockito can be.&nbsp;Imagine that you write some kind of application that is basically a client app for Twitter. When it's running "for real" you would want this app to connect to Twitter "for real". But for testing purposes, you might want to "mock" this connection.&nbsp;With Mockito, though, what you could do is create an&nbsp;<em>Interface</em>, for example called "ITweet" that is basically a stand-in for all of the interactions with the Twitter service (which might be really complex).&nbsp;Let's say the ITweet interface defines some method "getMessage" that the client app would call to get any new messages. Then you could use Mockito to mock the behavior of the getMessage method, for instance like this:</p>
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+<span class="directive">public</span> <span class="type">void</span> testTweet() {
+    TwitterClient twitterClient = <span class="keyword">new</span> TwitterClient();
+    ITweet iTweet = mock(ITweet.class);
+    when(iTweet.getMessage()).thenReturn(<span class="string"><span class="delimiter">"</span><span class="content">Using mockito is great</span><span class="delimiter">"</span></span>);
+    twitterClient.sendTweet(iTweet);
+}</code></pre>
+<p>This basically uses the ITweet mock object to hide the complexity of interacting with the Twitter service, letting you test everything else about your application.</p>
+<h3>A Challenge [Optional]</h3>
+<p>If you've gotten this far and you still have some time, let's test how much of this you understand and can do on your own. Let's go back to the TemperatureConverter project. See if you can accomplish the following:</p>
+<ul>
+<li>Change the app so that when the user presses the convert button, the app launches an intent that starts a new activity. That new activity should display the conversion result. For instance, if you entered 212 and selected "to Celsius", the launched intent&nbsp;might just result in displaying&nbsp;a screen with&nbsp;the text "212F is 100C".</li>
+<li>Make sure that the user can get "back" to the converter after seeing the display.</li>
+<li>Write meaningful tests to ensure that your app works (e.g., write a test to ensure that your Intent is constructed correctly).</li>
+</ul>
+<h3>Want More?</h3>
+<p>Lest you think that testing is only for Android, or only for Java... well, it's not. You can (and should!) test anything you write. Luckily, there are lots of tools depending on your platform. For example, to test Python code, you can use <a href="http://pyunit.sourceforge.net/pyunit.html">pyUnit</a>. That link has a pretty simple tutorial that will get you up and running with test cases in python.</p>
+<h3>Finishing Up&nbsp;</h3>
+<p><span>There is a lot more to learn about testing in Android. For instance you can learn to use Espresso to test the user interface. See <a href="http://www.vogella.com/tutorials/AndroidTestingEspresso/article.html">this</a> tutorial for some examples and exercises. You can also use UI Automator to do&nbsp;<em>blackbox testing<strong>&nbsp;</strong></em> across components for which you do not have the source code. See <a href="http://www.vogella.com/tutorials/AndroidTestingUIAutomator/article.html">this</a> tutorial for examples and exercises.</span></p>
+<p><span>As always, before you go, do the <a title="Testing Quiz" href="https://utexas.instructure.com/courses/1198798/quizzes/1147013" data-api-endpoint="https://utexas.instructure.com/api/v1/courses/1198798/quizzes/1147013" data-api-returntype="Quiz">Testing Quiz</a>!</span></p>
+</div>
+</div>
+</div>
+</body> </html>

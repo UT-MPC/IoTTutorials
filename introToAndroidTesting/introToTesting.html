@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title></title>
+</head>
+<h1>Introduction to Testing</h1>
+<h4>Christine Julien, The University of Texas at Austin</h4>
+<p>&nbsp;</p>
+<p>In software,&nbsp;<strong>testing</strong> is the process of finding bugs. It is a&nbsp;<strong>dynamic</strong> approach, which refers to the fact that we run the code for&nbsp;<em>some</em> inputs and check that the outputs are correct. This only checks correctness for&nbsp;<strong>some</strong> executions.</p>
+<p><strong>Debugging</strong> is the process of removing bugs; it includes both&nbsp;<em>locating</em> and&nbsp;<em>removing</em> bugs. Debugging is&nbsp;<em>not</em> the same thing as testing.</p>
+<p>There are three key components of a testing process:</p>
+<ul>
+<li>generating the test inputs</li>
+<li>determining the adequacy of the test suite (<strong>coverage</strong>)</li>
+<li>creating test&nbsp;<strong>oracles</strong> (basically whether a test should&nbsp;<em>pass</em> or&nbsp;<em>fail</em>)</li>
+</ul>
+<p>Some other terminology (though these terms are not always used consistently):</p>
+<ul>
+<li>a&nbsp;<strong>fault</strong> is one or more incorrect lines of code</li>
+<li>an&nbsp;<strong>error</strong> is an incorrect (unobserved) state caused by a fault</li>
+<li>a&nbsp;<strong>failure</strong> is in incorrect (observed) state caused by a fault</li>
+</ul>
+<p>The goal of testing is to make both errors and failures observable.</p>
+<p>The first use of the term "bug" is attributed to Thomas Edison (1878):</p>
+<p style="padding-left: 30px;">"<em>It has been just so in all of my inventions. The first step is an intuition, and comes with a burst, then difficulties arise--this thing gives out and&nbsp;</em>[it is]&nbsp;<em>then that "Bugs"--as such little faults and difficulties are called--show themselves and months of intense watching, study and labor are requisite before commercial success or failure is certainly resolved.</em>"</p>
+<p>When people think of the first "bug" in a computer program, they often think of the incident in 1947, when researchers at Harvard were working on the early Mark II computer and found a moth actually trapped in a relay in the computer.&nbsp;<img style="display: block; margin-left: auto; margin-right: auto;" src="https://utexas.instructure.com/courses/1198798/files/42568539/preview" alt="bug.jpg" width="525" height="343" data-api-endpoint="https://utexas.instructure.com/api/v1/courses/1198798/files/42568539" data-api-returntype="File" />In any case, we now routinely use "bug" and "debug" as part of the language of computing.</p>
+<p>There are many many cases of software failures that were catastrophic in one way or another. <a href="http://www.computerworld.com/article/2515483/enterprise-applications/epic-failures--11-infamous-software-bugs.html">This</a> is a great article highlighting some of them. My quick summary of a few:</p>
+<ul>
+<li>inconsistent&nbsp;unit of measure (one team used English units another metric) leads to crash of Mars orbital probe</li>
+<li>arithmetic overflow (trying to smash a 64 bit number into 16 bits) leads to crash of Ariane launcher</li>
+<li>a (known) problem with&nbsp;<em>clock drift</em> caused a failure in the Patriot missile, leading to the deaths of (at least) 28 US soldiers</li>
+<li>a&nbsp;<em>race condition</em> in a radiation therapy machine delivers overdose of radiation, sickening at least six&nbsp;people and eventually killing&nbsp;some</li>
+<li>a Soviet early-warning missile system full of software bugs issues faulty warning of five inbound nuclear missiles. (Luckily, the Lt. Col. in charge took a risk and assumed they were faults, thus preventing a nuclear war.)</li>
+</ul>
+<p>A 2002 study found that software bugs cost almost $60B annually.</p>
+<h3>Types of Testing</h3>
+<p>Testing occurs (or should occur) at many stages in the lifecycle of a software system.</p>
+<p><strong>Unit testing</strong> is the most common and easiest to understand/do. Unit testing refers to the verification of individual methods (or similar components) in a software system. (This is what we'll do in our tutorial.)</p>
+<p><strong>Integration testing</strong> is the verification of the interactions among multiple modules in the system.</p>
+<p><strong>System testing</strong> is the testing of the system as a whole.</p>
+<p><strong>Acceptance testing</strong> is the validation of the software against the user requirements.</p>
+<p><strong>Performance testing</strong> refers to the characterization of the performance of the software.</p>
+<p><strong>Regression testing</strong> is more a style of testing that refers to testing new versions of the software against old tests.</p>
+<h3>Conclusion</h3>
+<p>Testing itself is a whole sub-domain of software engineering, and we won't get into all of the details. In general, there are lots and lots of tools available to help you test your programs adequately, regardless of the platform or language.&nbsp;<em>Test-driven development</em> is a style of writing software that promotes writing the tests&nbsp;<em>first</em>, based on what you want to achieve. The general point, though, is to not dismiss testing as a&nbsp;<strong>necessary</strong> element of software engineering.</p>
+</body> </html>
