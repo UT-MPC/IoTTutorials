@@ -1,0 +1,163 @@
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title></title>
+</head>
+<h1>Introduction to Version Control with Git and GitHub</h1>
+<h4>Christine Julien, The University of Texas at Austin</h4>
+<p>&nbsp;</p>
+<p>In the software engineering world, almost all of our work is done in collaboration. We want to share the code that we write with others because we are working together (or maybe just because our stuff is cool and we want other people to built on it). Either way, we need easy and safe ways to share code.</p>
+<h3>A Pause</h3>
+<p><strong>Why is it a terrible idea to share code via, for example, email?</strong></p>
+<h3>Back to Regularly Scheduled Programming...</h3>
+<p>There are lots of options for version control, and most people who have used more than one of the options have very strong opinions about which one should be used. Basically, there are two styles of version control commonly used: centralized and distributed. The <em>subversion</em> system is an example of centralized version control;&nbsp;<em>git</em> is an example of distributed version control.&nbsp;In centralized version control, There is a single "server" that hosts the&nbsp;<em>repository</em>. Anyone wanting to interact with, use, or update the repository must connect to this single centrally located server. The focus in centralized version control is really primarily on&nbsp;<span>synchronizing, tracking, and backing up files. In distributed version control, on the other hand, there may be multiple copies of the repository, and the focus is much more on&nbsp;<em>sharing</em> files. It's a bit confusing, though, because the most common way to use distributed version control is to actually have a single "authoritative" location for the repository, much like in centralized version control.</span></p>
+<h3><span>Terminology</span></h3>
+<p><span>It's useful here to step back and define some terms before we get in too deep.</span></p>
+<ul>
+<li><strong>repository</strong>: t<span>he master storage of all of the files that are under version (or source) control</span></li>
+<li><strong>working copy</strong>:&nbsp;a local<span>&nbsp;copy of a&nbsp;file where you actually make your changes; your working copy can get&nbsp;<em>out of date</em> relative to the master stored in the repository</span></li>
+<li><strong>commit</strong>: to save your working copy&nbsp;of a file or set of files into a repository</li>
+<li><strong>update</strong>:&nbsp;to check for&nbsp;<span>and "pull" changes from master&nbsp;in the repository into your local working copy&nbsp;</span></li>
+<li><strong>revision</strong>: a<span>&nbsp;committed change in the history of a file or set of files; revisions are generally assigned version numbers, which are incremented throughout the lifetime of the file(s)</span></li>
+<li><strong>log</strong> <strong>message</strong>: a<span>&nbsp;comment describing&nbsp;changes made to a revision when you check it in</span></li>
+<li><strong>conflict</strong>: occurs<span>&nbsp;when two people try to commit changes that affect the same region of the same file; conflicts must be resolved (this is the worst part of version control!)</span></li>
+</ul>
+<h3><span>Git</span></h3>
+<p><span>I've based a lot of this tutorial on <a href="http://product.hubspot.com/blog/git-and-github-tutorial-for-beginners">this</a> one. <a href="https://try.github.io/">This</a> tutorial also reinforces a lot of what we're going to do and it's all online.</span></p>
+<p><span>In this tutorial (and in this class), we're going to work with git, which is a distributed version control system. There are a few additional things that it's useful to know about how git views repositories and working copies. First, in addition to the working copy and the repository, git also has a&nbsp;<strong>staging area</strong>. This can be o</span>ne of the most confusing parts when you're first learning git.</p>
+<p>When you're working a project through git, you are working on your local copy. Locally, your system keeps track of which files you have changed since your last commit (or since you checked out originally if you've never made a commit). You can keep making changes to the working copy (adding files, modifying files, etc.). Eventually, you decide you want to share that work, and you need to tell git to put those files in a commit. Generally, we want to do commits at meaningful checkpoints (e.g., points that indicate states of the working copy that we might want to go back to sometime). We use git's&nbsp;staging area&nbsp;to setup the files for a commit.</p>
+<p>We'll see in the active portion of our tutorial in a little bit that when you are making changes&nbsp;in a working copy, git keeps track of the changes you have made. But it doesn't&nbsp;<em>do</em> anything with those changes until you explicitly say to.&nbsp;<span>To add a file to a commit, you first need to <strong>add</strong> it to the staging area&nbsp;(we'll get to the specific commands in a bit). Once you have all of the changes you want in the staging area, you can&nbsp;<strong>commit</strong> those changes to the repository. The entire process looks something like this:</span></p>
+<p><span><img style="display: block; margin-left: auto; margin-right: auto;" src="https://git-scm.com/images/about/index1@2x.png" /></span></p>
+<h4><span>Step 0: Install Git and get a GitHub account</span></h4>
+<p><span>Not surprisingly, we need to install git to use it, but unfortunately, this installation can be different for different operating systems. If you don't have it already, use one of the following links.</span></p>
+<ul>
+<li><a href="https://git-scm.com/download/mac"><span>Mac installer</span></a></li>
+<li><a href="https://git-for-windows.github.io/"><span>Windows installer</span></a></li>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git"><span>Linux instructions</span></a></li>
+</ul>
+<p><span>Git and GitHub are not the same thing (though people are often confused on this matter). <a href="https://en.wikipedia.org/wiki/GitHub">"GitHub is a web-based Git or version control repository and Internet hosting service. It offers all of the distributed version control and source code management functionality of Git as well as adding its own features."</a>&nbsp;We're going to use GitHub to manage our Git repositories, though, because it's free, easy to use, and widely used. Another good option is <a href="https://bitbucket.org/">BitBucket</a>.</span></p>
+<p><span>If you don't already have a GitHub account, go <a href="https://github.com/join">here</a> and set one up. It's free to use as long as you're willing to keep the repositories you make public (meaning anyone else can see them).</span></p>
+<p><span>You can also do this tutorial via the RPi, if that's easier for you. Git is already installed on the RPi. (I personally recommend this over using Windows unless you're already an expert at using a terminal in Windows.)</span></p>
+<h4><span>Step 1: Let's Make a Repository</span></h4>
+<p><span>There are two ways of "starting" off in a git project. If you're starting the project from scratch, you'll create the repository (aka "repo"). Alternatively, if someone else already created the repo and you want to start working on it, you'll "clone" the repo. We'll start from the very beginning, then we'll come back to cloning.</span></p>
+<p><span>First, open a terminal. On the RPi (and similarly on Linux), we already know how to do this. On a&nbsp;Mac, open the Applications Folder. Find the Utilities Folder. Terminal will be inside that folder.</span></p>
+<p><span>In all cases, the terminal will open by default in your "home" directory. (If you're curious what this directory is, type "pwd" in the terminal.) Our first step is to navigate to a directory where we want to store our project. I recommend creating a new subdirectory in your home directory. To do this, type:</span></p>
+<pre><span>mkdir gitTutorial</span><br /><span>cd gitTutorial</span></pre>
+<p><span>This will create a new directory (mkdir for "make directory") called gitTutorial; the second line moves us inside that directory. If you type pwd again, you'll see the effect of the change.</span></p>
+<p><span>To initialize a brand new repo in this directory, type:</span></p>
+<pre><span>git init</span></pre>
+<p><span>You should get a message with feedback telling you that you have successfully created an empty git repository. This is just a local repository, not (yet) shared with anyone else.</span></p>
+<p><span>Next we want to add a new text file to the project. Create a new file in this directory. (You can use nano like we did in the previous tutorials. You could use vim, if you're familiar. You could use some other text editor and save the file to this directory. Or, the simplest thing to do is to use the command "touch", which creates an empty file without even opening it.) For example, type:</span></p>
+<pre><span>touch christine.txt</span></pre>
+<p><span>Before we move on, regardless of how you created the file, type ls in the terminal to make sure your text file is there.</span></p>
+<p><span>Now type:</span></p>
+<pre><span>git status</span></pre>
+<p><span>Above, we discussed the fact that, once we're working "inside" a git repo, git will keep track of any changes, even if we haven't yet added the associated files to the repo When you type git status, you're asking git what the status is of the files in the directory. Here, we can see that git has identified our file as one that is "untracked". Our next step is to&nbsp;<strong>add</strong> the file to the repo. Type:</span></p>
+<pre><span>git add christine.txt</span></pre>
+<p><span>(Obviously, use your file name...) This will add our file to the staging area. We have&nbsp;<em>not</em> committed the file yet. Type git status again to see how things have changed.</span></p>
+<p><span>Next type the command:</span></p>
+<pre><span>git commit -m "some message about the commit"</span></pre>
+<p><span>for example</span></p>
+<pre><span>git commit -m "My first commit"</span></pre>
+<p><span>You should always type a comment (to let others (or your future self) know what the major changes were in this commit). You'll get a little feedback from git about its success. You can also type git status again to see the difference.</span></p>
+<p><span>Right now, there's only one copy of our repo (the one on our local machine), so we're not really seeing the glory of distributed version control. In wider uses of git, there will be multiple copies of the repo (that's the distributed part), and you issue&nbsp;<strong>push</strong> and&nbsp;<strong>pull</strong> commands to share changes across the copies. If you commit to your local repo and want those changes to be reflected in all of the other copies of the repo, you&nbsp;<strong>push</strong> your changes. If you want to see if anyone else has some committed changes that haven't yet been pushed to you, you can&nbsp;<strong>pull<span style="text-decoration: underline;"></span></strong> those changes. To see how this works. we'll need to have a remote version of our repository as well. For this, let's use GitHub.</span></p>
+<h4><span>Step 2: Let's Connect&nbsp;to GitHub</span></h4>
+<p><span>If you only&nbsp;want to keep track of your code locally, you don't&nbsp;need to use GitHub. And there are a lot of really good reasons for using version control even if you don't have a remote version of your code. But&nbsp;if you want to work with a team, you can use&nbsp;GitHub to collaboratively modify the project's&nbsp;code.</span></p>
+<p>To create a new repo on GitHub, type <a href="http://www.github.com">www.github.com</a>&nbsp;in your browser window (or click that handy link), sign&nbsp;in, and go to the GitHub home page. You should see a green 'New repository' button. Click it.&nbsp;<span>GitHub will ask you to name your repo and provide a brief description. Let's name it something generic, like "MyGitTutorial". You can otherwise stick with the default selections.</span></p>
+<p>When you're done filling out the information, press the 'Create repository' button to make your new repo. GitHub will ask if you want to create a new repo from scratch or if you want to add a repo you have created locally. In this case, since we've already created a new repo locally, we want to push that onto GitHub. So we're going to follow the&nbsp;"....or push an existing repository from the command line"&nbsp;section. GitHub tells us the exact two commands we need to type from the terminal in order to connect our local repo to this new remote repo. You can just copy those commands, one at a time. For example, back in the terminal, I typed:</p>
+<pre class="f5 js-zeroclipboard-target"><span class="user-select-contain">git remote add origin <span class="js-git-clone-help-text">https://github.com/chr1s77/MyGitTutorial.git<br /></span></span><span class="user-select-contain">git push -u origin master</span></pre>
+<p>The first command is connecting our local repo to the remote one we just created on GitHub. The use of the "origin" keyword is giving us an&nbsp;<em>alias</em> to the remote repo. So we won't have to type the whole URL anymore; from now on, we can just push our changes to origin, and they'll go to the associated URL. And that's basically what the second line does. It pushes our committed changes into the origin (i.e., the repo located at the indicated URL). The keyword indicates that we want to push our changes to the "master" branch.&nbsp;So let's talk about branches...</p>
+<h4>Step 3: Let's Make a Branch</h4>
+<div id="gist26278153" class="gist">
+<div class="gist-file">
+<div class="gist-data">
+<div class="js-gist-file-update-container js-task-list-container file-box">
+<div id="file-addgithub-md" class="file">
+<div id="readme" class="readme blob instapaper_body">
+<div class="highlight highlight-source-shell">
+<p>Say you want to make a new feature but are worried about making&nbsp;changes to the main project while developing the feature. This is where <strong>git branches&nbsp;</strong>come in.&nbsp;</p>
+<p>Branches allow you to move back and forth between 'states' of a project. For instance, if you want to add a new page to your website you can create a new branch just for that page&nbsp;without affecting the&nbsp;main part of the project. Once you're done with the page, you can&nbsp;<strong>merge</strong> your changes from your branch into the master branch. When you create a new branch, git&nbsp;<span>keeps </span><span>track of which commit your branch 'branched' off of, so it knows the history behind all the files. Over time, git branches can start to look like this:</span></p>
+<p><span><img style="display: block; margin-left: auto; margin-right: auto;" src="https://i.stack.imgur.com/u8C1x.png" /></span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Let's say you are on the master branch (which is true for us in our project right now, since we only have the master branch), and you want to create a new branch to develop your web page.&nbsp;Type the following in the terminal:<strong>&nbsp;</strong></p>
+<pre><code>git checkout -b &lt;my branch name&gt;</code></pre>
+<p>Give the branch a name inside the &lt;&gt;. For instance:</p>
+<pre>git checkout -b mynewbranch</pre>
+<p>This command will automatically create a new branch and then 'check you out' on it, meaning git will move you to that branch, off of the master branch. To see what happened type:</p>
+<pre>git branch</pre>
+<p>This will show you the branches in your project. The * marks your current branch.</p>
+<p><span>Now, if you switch back to the master branch and make some more commits, your new branch won't see any of those changes until you </span><strong>merge</strong><span> those changes onto your new branch. Try switching by typing:</span></p>
+<pre><span>get checkout master</span></pre>
+<p><span>That will switch you back to the master branch.</span></p>
+<h4><span>Step 4: Let's Share our Branch</span></h4>
+<p><span>If you go back to GitHub and view your project, you'll see that there's only one branch there (the master branch). To see all of this, visit the URL of your project (for me, that's&nbsp;<a href="https://github.com/chr1s77/MyGitTutorial">https://github.com/chr1s77/MyGitTutorial</a>). &nbsp;Across the top, you'll see that there's one commit (our original commit) and one branch (the master branch). Now it's possible that you'll want to share the work on your branch with others either because you're working on it together or because you want someone else to take a look at it before you merge it back into the master branch. So we may want to also push the branch to the distributed repositories.</span></p>
+<p><span>This is actually really easy; just type</span></p>
+<pre><span>git push origin mynewbranch</span></pre>
+<p><span>GitHub will automatically create the branch for you on the remote repository. Now if you go back out to your repo on GitHub and reload the webpage, you'll be able to see&nbsp;<em>two</em> branches. And now others can checkout your branch as well as the master.</span></p>
+<h4><span>Step 5: Let's Create a Pull Request</span></h4>
+<p>A pull request (or PR) is a way to alert a repo's owners that you want to make some changes to their code. It allows them to review the code and make sure it looks good before putting your changes on the master branch. Let's pretend we're&nbsp;<em>not</em> the owner of the repo we created on GitHub and create a pull request for it.&nbsp;</p>
+<p>First,&nbsp;do the following.</p>
+<ul>
+<li>make a change in the new branch</li>
+<li>commit that change to the local repo</li>
+<li>push that change to the remote repo</li>
+</ul>
+<p>Try this on your own. <a title="Git Changes" href="https://utexas.instructure.com/courses/1198798/pages/Git%20Changes?titleize=0" data-api-endpoint="https://utexas.instructure.com/api/v1/courses/1198798/pages/Git%2520Changes" data-api-returntype="Page">Here</a> is the sequence of commands; click this only once you've tried on your own and succeeded (to check) or if you need help. When you're done, go out to your repo on GitHub and make sure you see the updates in the new branch. When you click on the branch in GitHub you should see a status update that indicates the file was recently changed. Notice that you only see this in the branch, but not in the master. The main page in GitHub for your project should look something like this:</p>
+<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://utexas.instructure.com/courses/1198798/files/42550167/preview" alt="Screen Shot Git 1.png" width="1996" height="888" data-api-endpoint="https://utexas.instructure.com/api/v1/courses/1198798/files/42550167" data-api-returntype="File" /></p>
+<p>Now that we have changes on our branch, we want to create a pull request to merge it back into the master branch. Click on the green "Compare &amp; pull request" button.</p>
+<p>The page that appears will allow you to review the changes, showing you a "diff" (the difference) between the files in the branch and the files in the master (into which we are going to merge the changes). At the top of this page, you can change the setup of the merge; this is useful if you have lots of branches and have multiple options for how to merge them. Near the top, you'll also see git telling us that this branch can be merged automatically. That is, the changes in our branch and any changes that might have happened in the master won't conflict with each other (e.g., they weren't made to the same lines of text). T<span>his button won't always be green. In some cases it'll be grey, which means you're faced with a </span><strong>merge conflict</strong><span>. This is when there is a change in one file that conflicts with a change in another file and git can't figure out which version to use. You'll have to manually go in&nbsp;and tell git which version to use.</span></p>
+<p>We can leave some notes for whoever will review the pull request, explaining why we're making the request or giving some more context for the change. For now, though, just click the "Create pull request" button. When you're the owner or co-owner of a repo&nbsp;<span>you do&nbsp;not need to create a pull request&nbsp;to merge your changes. However, it's still a good idea to make one so that you can keep a more complete history of your updates. Further, it's generally good practice to make sure you always create a new branch when making changes so that you always maintain a working master branch.</span></p>
+<p>Since we are also the "owner" of this repo, we can also review the pull request. After we submit the pull request, GitHub takes us straightaway to the page where we can review the request. Alternatively, we can get there from the main project screen in GitHub by clicking on the "Pull requests" tab, and then selecting the desired pull request. We're happy with this pull request, so we can just click "Merge pull request" and then "Confirm merge". This will merge the branch that we created back into the master branch, so there will only be one branch in our project. If you now go back to the main page of the project and click on Branches, you'll see a purple status for our branch indicating that it has been merged.</p>
+<p>When you're done, it's often a good idea to delete&nbsp;your branch (too many branches can become messy). To do this, click on the purple "Merged" button, then click the grey "Delete branch" button. You can also double check that your commits were merged by clicking on the "Commits" link on the first page of your new repo.</p>
+<h4>Step 6: Let's Get Those Changes Locally</h4>
+<p>Right now, the repo on GitHub looks a little different than what's on your local machine. Specifically, the commit you made to merge your branch into the master branch doesn't exist in the master branch on your local machine.</p>
+<p>In order to get the most recent changes that you or others have merged on GitHub, make sure you're working in the master branch, then type:</p>
+<pre>git pull origin master</pre>
+<p>We can also use git log to get a history of things that have happened. In the terminal, type</p>
+<pre>git log&nbsp;</pre>
+<p><span>Because, as they say, a picture is worth a thousand words, here's a picture that summarizes a lot of what the above says.&nbsp;</span><span><a href="https://shalikafdo.wordpress.com/2016/02/25/simple-guidance-for-using-git-on-git-bash/">This</a> website also provides a pretty handy reference to a lot of the git commands.</span></p>
+<p><span><img class="aligncenter size-full wp-image-186" style="display: block; margin-left: auto; margin-right: auto;" src="https://shalikafdo.files.wordpress.com/2016/02/git5.png?w=604&amp;h=402" alt="git5" width="604" height="402" data-attachment-id="186" data-permalink="https://shalikafdo.wordpress.com/2016/02/25/simple-guidance-for-using-git-on-git-bash/git5/" data-orig-file="https://shalikafdo.files.wordpress.com/2016/02/git5.png?w=604&amp;h=402" data-orig-size="800,532" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="git5" data-image-description="" data-medium-file="https://shalikafdo.files.wordpress.com/2016/02/git5.png?w=604&amp;h=402?w=300" data-large-file="https://shalikafdo.files.wordpress.com/2016/02/git5.png?w=604&amp;h=402?w=604" /></span></p>
+<p><span><a href="https://shalikafdo.wordpress.com/2016/02/25/simple-guidance-for-using-git-on-git-bash/"></a></span></p>
+<p>&nbsp;</p>
+<p><span>The commands we've been using for git, whether you've been working on your computer or on one of the Raspberry Pis, are all the same. And the process is the same. However, to make sure we can work in both environments, we're going to do a couple of quick "exercises". You can do the next two things in either order (and some people should probably do the second one first, just to reduce conflicts).</span></p>
+<h3><span>Git on the RPi</span></h3>
+<p>In this mini exercise, let's do something useful on the Raspberry Pi: let's put all of the Python code we've written for the Raspberry Pi so far under source control.&nbsp;</p>
+<p>Working with your partner, use one of your GitHub&nbsp;accounts to create a new repo for your code on GitHub&nbsp;and put all of your python scripts inside that repo. Make sure that both of you are "owners" of that repo and know how to "clone" it on your own computers (other than the Raspberry Pis).&nbsp;</p>
+<p>If you need help, click <a title="Git on the RPi &quot;Solutions&quot;" href="https://utexas.instructure.com/courses/1198798/pages/Git%20on%20the%20RPi%20%22Solutions%22?titleize=0" data-api-endpoint="https://utexas.instructure.com/api/v1/courses/1198798/pages/Git%2520on%2520the%2520RPi%2520%2522Solutions%2522" data-api-returntype="Page">here</a>. (But seriously, don't be the guy that clicks the link first... do it yourself!)</p>
+<h3><span>Git on Android</span></h3>
+<p><span>For Android, I made a&nbsp;<em>really</em> simple Android app and put it in a public repo on GitHub. You're going to check it out, make some changes, then get them merged back into the repo.</span></p>
+<p><span>Open Android Studio. At the front screen, instead of creating a new project or opening one that exists, select the option that says "Check out project from Version Control". Then select "GitHub". Enter the following URL:</span></p>
+<p><span><a href="https://github.com/chr1s77/UTSDPGitAppExample">https://github.com/chr1s77/UTSDPGitAppExample</a></span></p>
+<p><span>as the Git Repository URL. You can leave everything else the default values. Click "Clone".</span></p>
+<p><span>In the dialog box that follows, click "Yes" to continue to open the project.</span></p>
+<p><span>Out of the box, you should be able to just run this app in your emulator (or on an Android device) to see what it does. It's not much: it just displays a class roster.</span></p>
+<p><span>I want you to make one simple change to this file. However, you want to make this change&nbsp;<em>and</em> get it merged back into a repo you don't own. So you'll need to make a branch of the repo, make your changes in the branch, then submit a pull request to me (the owner of the repo) to merge your change into the master branch. Here, we're going to explore the built in functions of Android Studio that support doing all of this.</span></p>
+<p><span>In the menu bar at the top of Android Studio, find the VCS menu. Then select</span></p>
+<p><span>VCS &gt; Git &gt; Branches</span></p>
+<p><span>In the dialog box that opens, you want to select to create a new branch. Enter the name of your new branch. (Usually it's a good idea to give it a name that describes what you're doing on this branch. For instance "AddingJaneAndJoe".) Once you do this, Android Studio will automatically shift your branch so that you're working in your newly created branch.</span></p>
+<p><span>Now we're ready to actually change the file. Open the project, then click on:</span></p>
+<p><span>app &gt; java &gt; com.example.utsdpgitappexample</span></p>
+<p><span>And open the file MainActivity.java.</span></p>
+<p><span>Near the top of the file, you should see a line that begins&nbsp;</span></p>
+<pre>String[] <span>classNames </span>= ...</pre>
+<p>And is followed by an array of names. Initially it looked like:</p>
+<pre>String[] <span>classNames </span>= {"Christine Julien"};</pre>
+<p>By the time you see it, it might look more like this:</p>
+<pre>String[] <span>classNames </span>= {"Christine Julien", "John Doe", "Jane Doe"};</pre>
+<p>You should just add your name to the list, making sure that your syntax is correct.</p>
+<p>Rerun your program to see that the list now contains your name wherever you added it. (When the list gets too long for the screen, the program *should* automatically turn the list view into one that is scrollable.)</p>
+<p>When you're happy that you've correctly modified the code, we need to get your changes reflected back in the repository. To do that we need to create a pull request so that the repo's owner (that's me!) can accept your changes and commit them to the main branch.</p>
+<p>First, we need to commit the changes to our branch. Select VCS &gt; Git &gt; Commit</p>
+<p>In the dialog box that pops up, enter some meaningful comment (e.g., "Added Jane Doe and John Doe to the roster"). Then at the bottom right corner, hover over the commit button so you can choose "Commit and Push". Then select Push.&nbsp;</p>
+<p>OK. Now time for the merge. Go to the VCS menu in Android Studio again. Select</p>
+<p>VCS &gt; Git &gt; Create Pull Request</p>
+<p>(It's down at the bottom.)</p>
+<p>The base fork and base branch are probably correct by default. The base branch is the branch&nbsp;<em>into</em> which you want to merge (in this case, it should be the master) and the base fork should be the project. This dialog box doesn't show the branch you're coming from, but it's the one you've been working in. You can click the "Show diff" button if you want to see what commits have happened on your branch that haven't been merged into the master branch. When you're done perusing, Click OK. You'll get a little popup that you've successfully created a pull request, which is now on my plate in GitHub. (Give me a heads up, and then I can commit your merge request.)</p>
+
+</body> </html>
